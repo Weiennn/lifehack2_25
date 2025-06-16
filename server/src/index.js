@@ -1,5 +1,6 @@
 const express = require('express');
 require('dotenv').config();
+require('../db');
 
 const quizRouter = require('./routes/quiz');
 

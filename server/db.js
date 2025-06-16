@@ -8,7 +8,9 @@ db.serialize(() => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
-  `);
+  `, (err) => {
+    if (err) console.error('Error creating table:', err);
+  });
   db.run(`
     CREATE TABLE IF NOT EXISTS questions (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,7 +22,9 @@ db.serialize(() => {
       explanation TEXT,
       FOREIGN KEY(quiz_id) REFERENCES quizzes(id)
     );
-  `);
+  `, (err) => {
+    if (err) console.error('Error creating table:', err);
+  });
 });
 
 module.exports = db;

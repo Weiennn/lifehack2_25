@@ -45,28 +45,58 @@ export default function UploadPage() {
   }
 
   const handleFileUpload = async (file: File) => {
-    setUploadedFile(file)
-    setIsProcessing(true)
-    setProcessingProgress(0)
+    setUploadedFile(file);
+    setIsProcessing(true);
+    setProcessingProgress(0);
+    setAnalysisResult(null); // Clear previous results
 
-    // Simulate processing with progress
-    const progressInterval = setInterval(() => {
-      setProcessingProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(progressInterval)
-          setIsProcessing(false)
-          setAnalysisResult({
-            topics: ["Calculus Fundamentals", "Derivatives", "Integration", "Limits"],
-            chapters: 8,
-            estimatedQuizTime: "15-20 minutes",
-            difficulty: "Intermediate",
-          })
-          return 100
-        }
-        return prev + Math.random() * 15
-      })
-    }, 200)
-  }
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      // Simulate progress for UI feedback during upload/processing
+      let currentProgress = 0;
+      const progressIncrement = 5; // Use a fixed increment
+      const progressInterval = setInterval(() => {
+        currentProgress = Math.min(currentProgress + progressIncrement, 99); // Cap at 99% until actual response
+        setProcessingProgress(currentProgress);
+      }, 200);
+
+      const response = await fetch('http://localhost:3001/generate-questions', {
+        method: 'POST',
+        body: formData,
+      });
+
+      clearInterval(progressInterval); // Stop simulated progress
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to generate questions');
+      }
+
+      const data = await response.json();
+      console.log("Server response:", data); // Debugging log
+
+      // The server now directly returns { questions: [], quizId: number }
+      setAnalysisResult({
+        questions: data.questions,
+        quizId: data.quizId,
+      });
+      setProcessingProgress(100);
+    } catch (error: unknown) { // Explicitly type as unknown
+      console.error("Error uploading file or generating questions:", error);
+      let errorMessage = "An unexpected error occurred.";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'object' && error !== null && 'error' in error && typeof (error as any).error === 'string') {
+        errorMessage = (error as any).error; // For server-side errors like { error: "message" }
+      }
+      setAnalysisResult({ error: errorMessage });
+      setProcessingProgress(0); // Reset progress on error
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   const resetUpload = () => {
     setUploadedFile(null)
@@ -162,33 +192,9 @@ export default function UploadPage() {
                     <span className="font-medium">Analysis Complete!</span>
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="p-4 bg-purple-50 rounded-lg">
-                      <h4 className="font-medium text-purple-900 mb-2">Topics Detected</h4>
-                      <div className="space-y-1">
-                        {analysisResult.topics.map((topic: string, index: number) => (
-                          <div key={index} className="text-sm text-purple-700">
-                            • {topic}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Chapters Found:</span>
-                        <span className="text-sm font-medium">{analysisResult.chapters}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Estimated Quiz Time:</span>
-                        <span className="text-sm font-medium">{analysisResult.estimatedQuizTime}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Difficulty Level:</span>
-                        <span className="text-sm font-medium">{analysisResult.difficulty}</span>
-                      </div>
-                    </div>
-                  </div>
+                  {/* Display questions or a success message */}
+                  <p className="text-gray-700">Successfully generated {analysisResult.questions.length} questions.</p>
+                  <p className="text-gray-700">Quiz ID: {analysisResult.quizId}</p>
 
                   <div className="flex space-x-3 pt-4">
                     <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">

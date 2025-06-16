@@ -4,6 +4,7 @@ const multer = require('multer');
 const pdf = require('pdf-parse');
 const { chunkText } = require('../utils/pdf');
 const { generateQuestions } = require('../utils/gemini');
+const db = require('../../db'); // Import the database connection
 
 const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
@@ -55,7 +56,46 @@ router.post('/', upload.single('file'), async (req, res) => {
       return res.status(500).json({ error: 'No questions generated' });
     }
 
-    res.json({ questions: allQuestions });
+    // Store the quiz and questions in the database
+    db.serialize(() => {
+      db.run('INSERT INTO quizzes (created_at) VALUES (CURRENT_TIMESTAMP)', function(err) {
+        if (err) {
+          console.error('Error inserting quiz:', err);
+          return res.status(500).json({ error: 'Failed to save quiz' });
+        }
+
+        const quizId = this.lastID;
+        console.log(`Quiz inserted with ID: ${quizId}`); // Debugging log
+
+        const stmt = db.prepare('INSERT INTO questions (quiz_id, question, options, correct_index, difficulty, explanation) VALUES (?, ?, ?, ?, ?, ?)');
+
+        let questionsInsertedCount = 0;
+        const totalQuestions = allQuestions.length;
+
+        if (totalQuestions === 0) {
+          stmt.finalize(); // Finalize if no questions to insert
+          res.json({ questions: allQuestions, quizId: quizId });
+          return;
+        }
+
+        allQuestions.forEach((q, index) => {
+          stmt.run(quizId, q.question, JSON.stringify(q.options), q.correct, q.difficulty, q.explanation, function(err) {
+            if (err) {
+              console.error(`Error inserting question ${index} (Quiz ID: ${quizId}):`, err);
+            } else {
+              console.log(`Question ${index} inserted successfully (Quiz ID: ${quizId}).`); // Debugging log
+            }
+            questionsInsertedCount++;
+            if (questionsInsertedCount === totalQuestions) {
+              stmt.finalize();
+              console.log("Sending response to client:", { questions: allQuestions, quizId: quizId }); // Added log
+              res.json({ questions: allQuestions, quizId: quizId });
+            }
+          });
+        });
+      });
+    });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });

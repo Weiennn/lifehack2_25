@@ -21,7 +21,7 @@ router.post('/', upload.single('file'), async (req, res) => {
   try {
     // Extract text and split into chunks
     const data = await pdf(req.file.buffer);
-    const chunks = chunkText(data.text, 2000);
+    const chunks = chunkText(data.text, 20000);
 
     // Generate questions for each chunk
     const perChunkQs = [];

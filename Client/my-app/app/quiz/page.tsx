@@ -1,54 +1,85 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { ChevronRight, CheckCircle, XCircle, RotateCcw, Trophy, Brain } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 
-const mockQuestions = [
-  {
-    id: 1,
-    question: "What is the derivative of x²?",
-    options: ["2x", "x", "2", "x²"],
-    correct: 0,
-    difficulty: "Easy",
-    explanation: "The derivative of x² is 2x using the power rule.",
-  },
-  {
-    id: 2,
-    question: "Which of the following is a fundamental theorem of calculus?",
-    options: [
-      "The limit of a function exists",
-      "The derivative of an integral is the original function",
-      "All functions are continuous",
-      "Integration is always possible",
-    ],
-    correct: 1,
-    difficulty: "Medium",
-    explanation:
-      "The Fundamental Theorem of Calculus states that differentiation and integration are inverse operations.",
-  },
-  {
-    id: 3,
-    question: "What is the integral of 1/x?",
-    options: ["ln|x| + C", "x + C", "1/x² + C", "x² + C"],
-    correct: 0,
-    difficulty: "Medium",
-    explanation: "The integral of 1/x is ln|x| + C, where C is the constant of integration.",
-  },
-]
+interface Question {
+  question: string
+  options: string[]
+  correct: number
+  difficulty: string
+  explanation: string
+}
 
 export default function QuizPage() {
-  const [currentQuestion, setCurrentQuestion] = useState(0)
+  const searchParams = useSearchParams()
+  const quizId = searchParams.get("quizId")
+
+  const [questions, setQuestions] = useState<Question[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
   const [score, setScore] = useState(0)
   const [quizComplete, setQuizComplete] = useState(false)
   const [answers, setAnswers] = useState<number[]>([])
 
-  const question = mockQuestions[currentQuestion]
-  const progress = ((currentQuestion + 1) / mockQuestions.length) * 100
+  useEffect(() => {
+    if (!quizId) {
+      setError("No quiz ID provided.")
+      setLoading(false)
+      return
+    }
+
+    const fetchQuestions = async () => {
+      try {
+        const response = await fetch(`http://localhost:3001/generate-questions/${quizId}`)
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const data = await response.json()
+        setQuestions(data.questions)
+      } catch (e: any) {
+        setError(e.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchQuestions()
+  }, [quizId])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-lg text-gray-600">Loading quiz...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-lg text-red-600">Error: {error}</p>
+      </div>
+    )
+  }
+
+  if (questions.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-lg text-gray-600">No questions found for this quiz.</p>
+      </div>
+    )
+  }
+
+  const currentQuestion = questions[currentQuestionIndex]
+  const progress = ((currentQuestionIndex + 1) / questions.length) * 100
 
   const handleAnswerSelect = (answerIndex: number) => {
     if (showFeedback) return
@@ -62,14 +93,14 @@ export default function QuizPage() {
     const newAnswers = [...answers, selectedAnswer]
     setAnswers(newAnswers)
 
-    if (selectedAnswer === question.correct) {
+    if (selectedAnswer === currentQuestion.correct) {
       setScore(score + 1)
     }
   }
 
   const handleNextQuestion = () => {
-    if (currentQuestion < mockQuestions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1)
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1)
       setSelectedAnswer(null)
       setShowFeedback(false)
     } else {
@@ -78,12 +109,13 @@ export default function QuizPage() {
   }
 
   const resetQuiz = () => {
-    setCurrentQuestion(0)
+    setCurrentQuestionIndex(0)
     setSelectedAnswer(null)
     setShowFeedback(false)
     setScore(0)
     setQuizComplete(false)
     setAnswers([])
+    // Optionally, refetch questions if needed, or navigate back to upload
   }
 
   const getDifficultyColor = (difficulty: string) => {
@@ -100,7 +132,7 @@ export default function QuizPage() {
   }
 
   if (quizComplete) {
-    const percentage = Math.round((score / mockQuestions.length) * 100)
+    const percentage = Math.round((score / questions.length) * 100)
 
     return (
       <div className="min-h-screen p-4 sm:p-6 lg:p-8">
@@ -118,7 +150,7 @@ export default function QuizPage() {
               </div>
 
               <p className="text-xl text-gray-600 mb-8">
-                You scored {score} out of {mockQuestions.length} questions correctly
+                You scored {score} out of {questions.length} questions correctly
               </p>
 
               <div className="grid md:grid-cols-3 gap-6 mb-8">
@@ -127,7 +159,7 @@ export default function QuizPage() {
                   <div className="text-sm text-green-600">Correct</div>
                 </div>
                 <div className="p-4 bg-red-50 rounded-lg">
-                  <div className="text-2xl font-bold text-red-600">{mockQuestions.length - score}</div>
+                  <div className="text-2xl font-bold text-red-600">{questions.length - score}</div>
                   <div className="text-sm text-red-600">Incorrect</div>
                 </div>
                 <div className="p-4 bg-blue-50 rounded-lg">
@@ -166,15 +198,15 @@ export default function QuizPage() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-2xl font-bold text-gray-900">Calculus Quiz</h1>
-            <div className={`px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(question.difficulty)}`}>
-              {question.difficulty}
+            <h1 className="text-2xl font-bold text-gray-900">Quiz</h1> {/* Changed from Calculus Quiz */}
+            <div className={`px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(currentQuestion.difficulty)}`}>
+              {currentQuestion.difficulty}
             </div>
           </div>
 
           <div className="flex items-center space-x-4 mb-4">
             <span className="text-sm text-gray-600">
-              Question {currentQuestion + 1} of {mockQuestions.length}
+              Question {currentQuestionIndex + 1} of {questions.length}
             </span>
             <div className="flex-1">
               <Progress value={progress} className="h-2" />
@@ -188,20 +220,20 @@ export default function QuizPage() {
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Brain className="w-5 h-5 text-purple-500" />
-              <span>Question {currentQuestion + 1}</span>
+              <span>Question {currentQuestionIndex + 1}</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">{question.question}</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">{currentQuestion.question}</h2>
 
             <div className="space-y-3 mb-6">
-              {question.options.map((option, index) => {
+              {currentQuestion.options.map((option, index) => {
                 let buttonClass = "w-full p-4 text-left border-2 rounded-lg transition-all duration-200 "
 
                 if (showFeedback) {
-                  if (index === question.correct) {
+                  if (index === currentQuestion.correct) {
                     buttonClass += "border-green-500 bg-green-50 text-green-700"
-                  } else if (index === selectedAnswer && index !== question.correct) {
+                  } else if (index === selectedAnswer && index !== currentQuestion.correct) {
                     buttonClass += "border-red-500 bg-red-50 text-red-700"
                   } else {
                     buttonClass += "border-gray-200 bg-gray-50 text-gray-500"
@@ -226,10 +258,10 @@ export default function QuizPage() {
                         {String.fromCharCode(65 + index)}
                       </div>
                       <span>{option}</span>
-                      {showFeedback && index === question.correct && (
+                      {showFeedback && index === currentQuestion.correct && (
                         <CheckCircle className="w-5 h-5 text-green-500 ml-auto" />
                       )}
-                      {showFeedback && index === selectedAnswer && index !== question.correct && (
+                      {showFeedback && index === selectedAnswer && index !== currentQuestion.correct && (
                         <XCircle className="w-5 h-5 text-red-500 ml-auto" />
                       )}
                     </div>
@@ -241,13 +273,13 @@ export default function QuizPage() {
             {showFeedback && (
               <div className="p-4 bg-blue-50 rounded-lg mb-6">
                 <h4 className="font-medium text-blue-900 mb-2">Explanation</h4>
-                <p className="text-blue-800">{question.explanation}</p>
+                <p className="text-blue-800">{currentQuestion.explanation}</p>
               </div>
             )}
 
             <div className="flex justify-between">
               <div className="text-sm text-gray-500">
-                Score: {score}/{currentQuestion + (showFeedback ? 1 : 0)}
+                Score: {score}/{currentQuestionIndex + (showFeedback ? 1 : 0)}
               </div>
 
               {!showFeedback ? (
@@ -263,7 +295,7 @@ export default function QuizPage() {
                   onClick={handleNextQuestion}
                   className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
                 >
-                  {currentQuestion < mockQuestions.length - 1 ? "Next Question" : "Finish Quiz"}
+                  {currentQuestionIndex < questions.length - 1 ? "Next Question" : "Finish Quiz"}
                   <ChevronRight className="w-4 h-4 ml-2" />
                 </Button>
               )}

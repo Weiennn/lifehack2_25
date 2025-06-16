@@ -102,4 +102,22 @@ router.post('/', upload.single('file'), async (req, res) => {
   }
 });
 
+router.get('/:quizId', (req, res) => {
+  const { quizId } = req.params;
+  db.all('SELECT question, options, correct_index, difficulty, explanation FROM questions WHERE quiz_id = ?', [quizId], (err, rows) => {
+    if (err) {
+      console.error('Error retrieving questions:', err);
+      return res.status(500).json({ error: 'Failed to retrieve questions' });
+    }
+    const questions = rows.map(row => ({
+      question: row.question,
+      options: JSON.parse(row.options),
+      correct: row.correct_index,
+      difficulty: row.difficulty,
+      explanation: row.explanation
+    }));
+    res.json({ questions });
+  });
+});
+
 module.exports = router;

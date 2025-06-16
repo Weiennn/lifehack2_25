@@ -3,12 +3,14 @@
 import type React from "react"
 
 import { useState, useCallback } from "react"
+import { useRouter } from "next/navigation" // Import useRouter
 import { Upload, FileText, CheckCircle, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 
 export default function UploadPage() {
+  const router = useRouter() // Initialize useRouter
   const [isDragOver, setIsDragOver] = useState(false)
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
@@ -197,7 +199,10 @@ export default function UploadPage() {
                   <p className="text-gray-700">Quiz ID: {analysisResult.quizId}</p>
 
                   <div className="flex space-x-3 pt-4">
-                    <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
+                    <Button
+                      onClick={() => router.push(`/quiz?quizId=${analysisResult.quizId}`)} // Navigate to quiz page
+                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                    >
                       Start Quiz
                     </Button>
                     <Button variant="outline" onClick={resetUpload}>

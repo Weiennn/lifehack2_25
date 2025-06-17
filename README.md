@@ -16,7 +16,6 @@ This project is an AI-powered platform designed to help students study more effe
 Here's a glimpse of the application's user interface:
 
 ![LearnAI Platform Screenshot](./assets/learnai-screenshot.png)
-*(Please place your screenshot image, named `learnai-screenshot.png`, into the `lifehack2_25/assets/` directory.)*
 
 ### File Structure
 

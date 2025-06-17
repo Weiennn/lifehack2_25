@@ -58,7 +58,8 @@ router.post('/', upload.single('file'), async (req, res) => {
 
     // Store the quiz and questions in the database
     db.serialize(() => {
-      db.run('INSERT INTO quizzes (created_at) VALUES (CURRENT_TIMESTAMP)', function(err) {
+      const quizTitle = req.file.originalname.replace(/\.pdf$/i, ''); // Use original filename as title
+      db.run('INSERT INTO quizzes (created_at, title) VALUES (CURRENT_TIMESTAMP, ?)', [quizTitle], function(err) {
         if (err) {
           console.error('Error inserting quiz:', err);
           return res.status(500).json({ error: 'Failed to save quiz' });
@@ -100,6 +101,16 @@ router.post('/', upload.single('file'), async (req, res) => {
     console.error(err);
     res.status(500).json({ error: err.message });
   }
+});
+
+router.get('/all', (req, res) => {
+  db.all('SELECT id, title, created_at FROM quizzes ORDER BY created_at DESC', [], (err, rows) => {
+    if (err) {
+      console.error('Error retrieving all quizzes:', err);
+      return res.status(500).json({ error: 'Failed to retrieve quizzes' });
+    }
+    res.json({ quizzes: rows });
+  });
 });
 
 router.get('/:quizId', (req, res) => {

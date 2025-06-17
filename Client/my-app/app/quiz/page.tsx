@@ -1,8 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useSearchParams } from "next/navigation"
-import { ChevronRight, CheckCircle, XCircle, RotateCcw, Trophy, Brain } from "lucide-react"
+import { useSearchParams, useRouter } from "next/navigation" // Import useRouter
+import { ChevronRight, CheckCircle, XCircle, RotateCcw, Trophy, Brain, BookOpen } from "lucide-react" // Import BookOpen
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
@@ -15,11 +15,19 @@ interface Question {
   explanation: string
 }
 
+interface QuizMetadata {
+  id: number
+  title: string
+  created_at: string
+}
+
 export default function QuizPage() {
   const searchParams = useSearchParams()
+  const router = useRouter() // Initialize useRouter
   const quizId = searchParams.get("quizId")
 
   const [questions, setQuestions] = useState<Question[]>([])
+  const [quizzes, setQuizzes] = useState<QuizMetadata[]>([]) // State for all quizzes
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
@@ -30,34 +38,47 @@ export default function QuizPage() {
   const [answers, setAnswers] = useState<number[]>([])
 
   useEffect(() => {
-    if (!quizId) {
-      setError("No quiz ID provided.")
-      setLoading(false)
-      return
-    }
-
-    const fetchQuestions = async () => {
-      try {
-        const response = await fetch(`http://localhost:3001/generate-questions/${quizId}`)
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
+    const fetchQuizzesOrQuestions = async () => {
+      setLoading(true)
+      setError(null)
+      if (quizId) {
+        // Fetch specific quiz questions
+        try {
+          const response = await fetch(`http://localhost:3001/generate-questions/${quizId}`)
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+          }
+          const data = await response.json()
+          setQuestions(data.questions)
+        } catch (e: any) {
+          setError(e.message)
+        } finally {
+          setLoading(false)
         }
-        const data = await response.json()
-        setQuestions(data.questions)
-      } catch (e: any) {
-        setError(e.message)
-      } finally {
-        setLoading(false)
+      } else {
+        // Fetch all quizzes
+        try {
+          const response = await fetch(`http://localhost:3001/generate-questions/all`)
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+          }
+          const data = await response.json()
+          setQuizzes(data.quizzes)
+        } catch (e: any) {
+          setError(e.message)
+        } finally {
+          setLoading(false)
+        }
       }
     }
 
-    fetchQuestions()
-  }, [quizId])
+    fetchQuizzesOrQuestions()
+  }, [quizId]) // Depend on quizId to refetch when it changes
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-lg text-gray-600">Loading quiz...</p>
+        <p className="text-lg text-gray-600">Loading...</p>
       </div>
     )
   }
@@ -70,6 +91,52 @@ export default function QuizPage() {
     )
   }
 
+  // Function to format date
+  const formatQuizDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  // Render list of quizzes if no quizId is present
+  if (!quizId) {
+    if (quizzes.length === 0) {
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <p className="text-lg text-gray-600">No past quizzes found. Upload a PDF to create one!</p>
+        </div>
+      )
+    }
+
+    return (
+      <div className="min-h-screen p-4 sm:p-6 lg:p-8">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-3xl font-bold text-gray-900 mb-8">Past Quizzes</h1>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {quizzes.map((quiz) => (
+              <Card
+                key={quiz.id}
+                className="cursor-pointer hover:shadow-lg transition-shadow duration-200"
+                onClick={() => router.push(`/quiz?quizId=${quiz.id}`)}
+              >
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <BookOpen className="w-5 h-5 text-purple-500" />
+                    <span>{quiz.title}</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600">Created: {formatQuizDate(quiz.created_at)}</p>
+                  <p className="text-sm text-gray-500 mt-2">Click to start quiz</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Existing quiz display logic (when quizId is present)
   if (questions.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -115,7 +182,7 @@ export default function QuizPage() {
     setScore(0)
     setQuizComplete(false)
     setAnswers([])
-    // Optionally, refetch questions if needed, or navigate back to upload
+    router.push('/quiz'); // Navigate back to the list of quizzes
   }
 
   const getDifficultyColor = (difficulty: string) => {

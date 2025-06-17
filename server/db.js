@@ -6,7 +6,8 @@ db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS quizzes (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      title TEXT DEFAULT 'Untitled Quiz'
     );
   `, (err) => {
     if (err) console.error('Error creating table:', err);

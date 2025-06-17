@@ -436,7 +436,7 @@ export default function QuizPage() {
               <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg mb-8">
                 <h3 className="font-semibold text-gray-900 mb-2">🎯 You're improving!</h3>
                 <p className="text-gray-600">
-                  Based on your performance, we recommend focusing on integration techniques next.
+                  Keep up the good work!
                 </p>
               </div>
 

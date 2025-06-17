@@ -1,21 +1,48 @@
-# Lifehack AI Power Platform
+# LearnAI Platform
 
-This project is an AI-powered platform designed to help students study more effectively by transforming their notes into interactive quizzes. It features a Next.js frontend for a rich user experience and a Node.js Express backend for handling document processing, AI-driven quiz generation, and data management.
+This project is an AI-powered platform designed to help students study more effectively by transforming their notes into quizzes.
 
 ### Features
 
 *   **Quiz Generation**: Leverages the Gemini API to generate multiple-choice questions from uploaded text content, categorized by difficulty (Easy, Medium, Hard).
 *   **PDF Processing**: Extracts textual content from PDF documents, enabling the AI to process and generate questions from various study materials.
 *   **Interactive User Interface**: A modern and responsive Next.js application provides dashboards, quiz interfaces, team management, and ranking displays.
-*   **Secure API Endpoints**: The Express.js backend offers robust API endpoints for seamless communication between the client and server, handling quiz generation requests, document uploads, and data retrieval.
-*   **Local Data Storage**: Utilizes SQLite for efficient local storage of quiz data and other application-related information.
-*   **Team Management & Rankings**: Features to organize users into teams and display their performance through a ranking system.
+*   **Local Data Storage**: Utilizes SQLite for efficient storage of quiz data and other application-related information.
+*   **Team Management & Rankings**: Features to organize users into teams and display their performance through a ranking system. This creates a gamified experience for the user, encouraging user retention and use of the platform.
 
 ### Screenshots
 
-Here's a glimpse of the application's user interface:
+Here's a look at the application's user interface:
 
-![LearnAI Platform Screenshot](./assets/learnai-screenshot.png)
+#### Dashboard Page
+
+The dashboard page provides an overview of the application and quick access to it's key features.
+
+![LearnAI Dashboard Page](./assets/LearnAI-Dashboard.png)
+
+#### Upload Page
+
+Allows users to upload their study materials (e.g., PDF documents) for AI processing and quiz generation.
+
+![LearnAI Upload Page](./assets/LearnAI-upload.png)
+
+#### Quiz Page
+
+Where users can take the AI-generated quizzes.
+
+![LearnAI Quiz Page](./assets/LearnAI-Quiz.png)
+
+#### Team Page
+
+Enables users to manage their teams and collaborate.
+
+![LearnAI Team Page](./assets/LearnAI-Team.png)
+
+#### Rankings Page
+
+Displays user and team rankings based on quiz performance.
+
+![LearnAI Rankings Page](./assets/LearnAI-Rankings.png)
 
 ### File Structure
 
@@ -80,21 +107,21 @@ Follow these instructions to set up and run the project locally.
 Ensure you have the following installed on your system:
 
 *   **Node.js**: Version 18 or higher. You can download it from [nodejs.org](https://nodejs.org/).
-*   **npm** or **pnpm**: npm comes with Node.js. If you prefer pnpm (used in the client's lock file), install it globally: `npm install -g pnpm`.
+*   **npm**: npm comes with Node.js
 
 #### Installation
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/lifehack-ai-power-platform.git # Replace with your actual repository URL
-    cd lifehack-ai-power-platform/lifehack2_25
+    git clone https://github.com/Weiennn/lifehack2_25.git
+    cd lifehack2_25/lifehack2_25
     ```
 
 2.  **Install Client Dependencies:**
     Navigate to the client directory and install the dependencies.
     ```bash
     cd Client/my-app
-    pnpm install # or npm install
+    npm install 
     ```
 
 3.  **Install Server Dependencies:**
@@ -116,14 +143,13 @@ Replace `YOUR_GEMINI_API_KEY_HERE` with your actual Google Gemini API key. You c
 
 #### Running the Application
 
-You need to run both the server and the client applications concurrently.
+You need to run both the server and the client applications.
 
 1.  **Start the Server:**
     Open a new terminal window, navigate to the server directory, and start the server.
     ```bash
     cd lifehack2_25/server
-    npm run dev # For development with nodemon (auto-restarts on file changes)
-    # or npm start # For production
+    npm run dev
     ```
     The server will be running at `http://localhost:3001`.
 
@@ -131,7 +157,7 @@ You need to run both the server and the client applications concurrently.
     Open another terminal window, navigate to the client directory, and start the Next.js development server.
     ```bash
     cd lifehack2_25/Client/my-app
-    pnpm run dev # or npm run dev
+    npm run dev 
     ```
     The client application will be accessible in your web browser at `http://localhost:3000`.
 

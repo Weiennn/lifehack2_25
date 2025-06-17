@@ -74,10 +74,8 @@ router.post('/', upload.single('file'), async (req, res) => {
       perChunkQs.push(qs);
     }
 
-    // 1) Take one question per chunk
-    let allQuestions = perChunkQs
-      .map(qs => qs.shift())    // remove first question from each chunk
-      .filter(Boolean);
+    // Collect all questions from all chunks
+    let allQuestions = perChunkQs.flat().filter(Boolean);
 
     // Cap at 100 questions in total.
     if (allQuestions.length > 100) {

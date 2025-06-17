@@ -1,1 +1,181 @@
-test
+# Lifehack AI Power Platform
+
+This project is an AI-powered platform designed to help students study more effectively by transforming their notes into interactive quizzes. It features a Next.js frontend for a rich user experience and a Node.js Express backend for handling document processing, AI-driven quiz generation, and data management.
+
+### Features
+
+*   **Quiz Generation**: Leverages the Gemini API to generate multiple-choice questions from uploaded text content, categorized by difficulty (Easy, Medium, Hard).
+*   **PDF Processing**: Extracts textual content from PDF documents, enabling the AI to process and generate questions from various study materials.
+*   **Interactive User Interface**: A modern and responsive Next.js application provides dashboards, quiz interfaces, team management, and ranking displays.
+*   **Secure API Endpoints**: The Express.js backend offers robust API endpoints for seamless communication between the client and server, handling quiz generation requests, document uploads, and data retrieval.
+*   **Local Data Storage**: Utilizes SQLite for efficient local storage of quiz data and other application-related information.
+*   **Team Management & Rankings**: Features to organize users into teams and display their performance through a ranking system.
+
+### File Structure
+
+```
+.
+├── lifehack2_25/
+│   ├── Client/
+│   │   └── my-app/                 # Next.js client application
+│   │       ├── app/                # Next.js pages and routes
+│   │       │   ├── dashboard/      # Dashboard page
+│   │       │   │   └── page.tsx
+│   │       │   ├── quiz/           # Quiz taking page
+│   │       │   │   └── page.tsx
+│   │       │   ├── rankings/       # User/Team rankings page
+│   │       │   │   └── page.tsx
+│   │       │   ├── team/           # Team management page
+│   │       │   │   └── page.tsx
+│   │       │   ├── upload/         # Document upload page
+│   │       │   │   └── page.tsx
+│   │       │   ├── globals.css     # Global styles
+│   │       │   ├── layout.tsx      # Root layout for the application
+│   │       │   └── page.tsx        # Home page
+│   │       ├── components/         # Reusable UI components (Shadcn UI)
+│   │       │   ├── navigation.tsx
+│   │       │   ├── theme-provider.tsx
+│   │       │   └── ui/             # Shadcn UI components
+│   │       ├── hooks/              # Custom React hooks (e.g., use-mobile.tsx, use-toast.ts)
+│   │       ├── lib/                # Utility functions (e.g., utils.ts)
+│   │       ├── public/             # Static assets
+│   │       ├── styles/             # Additional styles
+│   │       ├── .gitignore          # Git ignore rules for client
+│   │       ├── components.json     # Shadcn UI configuration
+│   │       ├── next-env.d.ts       # Next.js environment type definitions
+│   │       ├── next.config.mjs     # Next.js configuration
+│   │       ├── package.json        # Client dependencies and scripts
+│   │       ├── pnpm-lock.yaml      # pnpm lock file
+│   │       ├── postcss.config.mjs  # PostCSS configuration
+│   │       ├── tailwind.config.ts  # Tailwind CSS configuration
+│   │       └── tsconfig.json       # TypeScript configuration
+│   └── server/                     # Node.js Express backend
+│       ├── src/
+│       │   ├── index.js            # Main server entry point and API setup
+│       │   ├── routes/             # Defines API routes
+│       │   │   └── quiz.js         # Quiz-related API endpoints
+│       │   └── utils/              # Utility functions
+│       │       ├── gemini.js       # Gemini API integration for quiz generation
+│       │       └── pdf.js          # PDF parsing utility
+│       ├── .env                    # Environment variables for the server
+│       ├── db.js                   # SQLite database connection and schema initialization
+│       ├── package-lock.json       # npm lock file
+│       ├── package.json            # Server dependencies and scripts
+│       └── quiz.db                 # SQLite database file (generated on first run)
+└── README.md                       # Project README file
+```
+
+### Getting Started
+
+Follow these instructions to set up and run the project locally.
+
+#### Prerequisites
+
+Ensure you have the following installed on your system:
+
+*   **Node.js**: Version 18 or higher. You can download it from [nodejs.org](https://nodejs.org/).
+*   **npm** or **pnpm**: npm comes with Node.js. If you prefer pnpm (used in the client's lock file), install it globally: `npm install -g pnpm`.
+
+#### Installation
+
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/your-username/lifehack-ai-power-platform.git # Replace with your actual repository URL
+    cd lifehack-ai-power-platform/lifehack2_25
+    ```
+
+2.  **Install Client Dependencies:**
+    Navigate to the client directory and install the dependencies.
+    ```bash
+    cd Client/my-app
+    pnpm install # or npm install
+    ```
+
+3.  **Install Server Dependencies:**
+    Navigate to the server directory and install the dependencies.
+    ```bash
+    cd ../../server
+    npm install
+    ```
+
+#### Environment Variables
+
+Create a `.env` file in the `lifehack2_25/server/` directory. This file will store sensitive information like API keys.
+
+```
+GOOGLE_API_KEY=YOUR_GEMINI_API_KEY_HERE
+PORT=3001 # Optional: Default is 3001 if not specified
+```
+Replace `YOUR_GEMINI_API_KEY_HERE` with your actual Google Gemini API key. You can obtain one from the [Google AI Studio](https://aistudio.google.com/app/apikey).
+
+#### Running the Application
+
+You need to run both the server and the client applications concurrently.
+
+1.  **Start the Server:**
+    Open a new terminal window, navigate to the server directory, and start the server.
+    ```bash
+    cd lifehack2_25/server
+    npm run dev # For development with nodemon (auto-restarts on file changes)
+    # or npm start # For production
+    ```
+    The server will be running at `http://localhost:3001`.
+
+2.  **Start the Client:**
+    Open another terminal window, navigate to the client directory, and start the Next.js development server.
+    ```bash
+    cd lifehack2_25/Client/my-app
+    pnpm run dev # or npm run dev
+    ```
+    The client application will be accessible in your web browser at `http://localhost:3000`.
+
+### Usage
+
+Once both the client and server are running:
+
+1.  Open your web browser and go to `http://localhost:3000`.
+2.  **Upload Documents**: Navigate to the "Upload" section to upload your study notes in PDF format.
+3.  **Generate Quizzes**: The platform will process your uploaded documents and generate quizzes based on the content.
+4.  **Take Quizzes**: Engage with the generated quizzes to test your knowledge.
+5.  **View Rankings**: Check your performance and compare with others on the rankings page.
+6.  **Manage Teams**: If applicable, use the team section to manage your study groups.
+
+### Technologies Used
+
+*   **Client-side**:
+    *   **Next.js**: React framework for building server-rendered and static web applications.
+    *   **React**: JavaScript library for building user interfaces.
+    *   **TypeScript**: Superset of JavaScript that adds static typing.
+    *   **Tailwind CSS**: A utility-first CSS framework for rapid UI development.
+    *   **Shadcn UI**: Reusable components built with Radix UI and Tailwind CSS.
+*   **Server-side**:
+    *   **Node.js**: JavaScript runtime environment.
+    *   **Express.js**: Fast, unopinionated, minimalist web framework for Node.js.
+    *   **SQLite3**: Lightweight, file-based relational database.
+    *   **Multer**: Middleware for handling `multipart/form-data`, primarily used for uploading files.
+    *   **PDF-Parse**: A utility to extract text from PDF files.
+    *   **Gemini API**: Google's AI model for generating content, used here for quiz generation.
+    *   **dotenv**: Module to load environment variables from a `.env` file.
+    *   **cors**: Node.js package for providing a Connect/Express middleware that can be used to enable CORS with various options.
+    *   **nodemon**: A tool that helps develop Node.js based applications by automatically restarting the node application when file changes in the directory are detected.
+
+### Documentation
+
+To ensure maintainability and future development, consider adding the following documentation:
+
+*   **API Endpoints**:
+    *   Detailed documentation for each API endpoint (e.g., `/generate-questions`, `/upload`), including HTTP methods (POST, GET), expected request body/query parameters, and example JSON responses.
+    *   Consider using tools like Swagger/OpenAPI for automated API documentation.
+*   **Client Components**:
+    *   Explanation of the purpose and usage of key React components, especially those in `Client/my-app/components/` and `Client/my-app/app/` pages.
+    *   Document props, state management, and any specific behaviors.
+*   **Utility Functions**:
+    *   Detailed comments and explanations for functions within `server/src/utils/` (e.g., `gemini.js`, `pdf.js`), describing their inputs, outputs, and core logic.
+*   **Database Schema**:
+    *   A clear description of the SQLite database schema, including table names, column names, data types, primary keys, foreign keys, and relationships. This can be a simple markdown table or a diagram.
+*   **Deployment Guide**:
+    *   Instructions on how to deploy the client and server applications to a production environment (e.g., Vercel for Next.js, Render/Heroku for Node.js).
+
+### License
+
+This project is licensed under the [Your Chosen License] - see the `LICENSE` file for details. (If you have a license file, otherwise remove this section or specify "MIT License" or "Unlicensed".)

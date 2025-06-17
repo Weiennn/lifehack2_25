@@ -8,15 +8,15 @@ import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 
-const mockTeamData = {
-  teamName: "Study Squad Alpha",
-  teamCode: "SQUAD2024",
+export const mockClassData = {
+  className: "2 Pointers",
+  classCode: "Lifehack2025",
   members: [
     {
       id: 1,
-      name: "Alex Johnson",
+      name: "Anson Ng",
       role: "Team Leader",
-      avatar: "/placeholder.svg?height=40&width=40",
+      avatar: "/student1.jpg",
       streak: 12,
       totalQuizzes: 45,
       averageScore: 92,
@@ -25,9 +25,9 @@ const mockTeamData = {
     },
     {
       id: 2,
-      name: "Sarah Chen",
+      name: "Wei En",
       role: "Member",
-      avatar: "/placeholder.svg?height=40&width=40",
+      avatar: "/student2.jpg",
       streak: 8,
       totalQuizzes: 38,
       averageScore: 87,
@@ -36,9 +36,9 @@ const mockTeamData = {
     },
     {
       id: 3,
-      name: "Mike Rodriguez",
+      name: "Clarence Choo",
       role: "Member",
-      avatar: "/placeholder.svg?height=40&width=40",
+      avatar: "/student3.jpeg",
       streak: 15,
       totalQuizzes: 52,
       averageScore: 89,
@@ -47,9 +47,9 @@ const mockTeamData = {
     },
     {
       id: 4,
-      name: "Emma Wilson",
+      name: "Mike Ross",
       role: "Member",
-      avatar: "/placeholder.svg?height=40&width=40",
+      avatar: "/student4.jpg",
       streak: 6,
       totalQuizzes: 29,
       averageScore: 84,
@@ -64,7 +64,7 @@ export default function TeamPage() {
   const [inviteEmail, setInviteEmail] = useState("")
 
   const handleCopyCode = () => {
-    navigator.clipboard.writeText(mockTeamData.teamCode)
+    navigator.clipboard.writeText(mockClassData.classCode)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
@@ -84,18 +84,18 @@ export default function TeamPage() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">{mockTeamData.teamName}</h1>
-          <p className="text-lg text-gray-600">Collaborate and learn together with your study team</p>
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">{mockClassData.className}</h1>
+          <p className="text-lg text-gray-600">Collaborate and learn together with your classmates</p>
         </div>
 
-        {/* Team Stats */}
+        {/* Class Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-purple-600">Team Members</p>
-                  <p className="text-3xl font-bold text-purple-700">{mockTeamData.members.length}</p>
+                  <p className="text-sm font-medium text-purple-600">Class Members</p>
+                  <p className="text-3xl font-bold text-purple-700">{mockClassData.members.length}</p>
                 </div>
                 <Users className="w-8 h-8 text-purple-500" />
               </div>
@@ -108,7 +108,7 @@ export default function TeamPage() {
                 <div>
                   <p className="text-sm font-medium text-blue-600">Total Quizzes</p>
                   <p className="text-3xl font-bold text-blue-700">
-                    {mockTeamData.members.reduce((sum, member) => sum + member.totalQuizzes, 0)}
+                    {mockClassData.members.reduce((sum, member) => sum + member.totalQuizzes, 0)}
                   </p>
                 </div>
                 <TrendingUp className="w-8 h-8 text-blue-500" />
@@ -120,11 +120,11 @@ export default function TeamPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-green-600">Avg Team Score</p>
+                  <p className="text-sm font-medium text-green-600">Avg Class Score</p>
                   <p className="text-3xl font-bold text-green-700">
                     {Math.round(
-                      mockTeamData.members.reduce((sum, member) => sum + member.averageScore, 0) /
-                        mockTeamData.members.length,
+                      mockClassData.members.reduce((sum, member) => sum + member.averageScore, 0) /
+                        mockClassData.members.length,
                     )}
                     %
                   </p>
@@ -136,18 +136,18 @@ export default function TeamPage() {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Team Members */}
+          {/* Class Members */}
           <div className="lg:col-span-2">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Users className="w-5 h-5 text-purple-500" />
-                  <span>Team Members</span>
+                  <span>Class Members</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {mockTeamData.members.map((member) => (
+                  {mockClassData.members.map((member) => (
                     <div
                       key={member.id}
                       className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
@@ -207,19 +207,19 @@ export default function TeamPage() {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <UserPlus className="w-5 h-5 text-purple-500" />
-                  <span>Invite Members</span>
+                  <span>Invite Classmates</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">Team Code</label>
+                  <label className="text-sm font-medium text-gray-700 mb-2 block">Class Code</label>
                   <div className="flex space-x-2">
-                    <Input value={mockTeamData.teamCode} readOnly className="font-mono" />
+                    <Input value={mockClassData.classCode} readOnly className="font-mono" />
                     <Button variant="outline" size="sm" onClick={handleCopyCode} className="px-3">
                       {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                     </Button>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">Share this code with others to join your team</p>
+                  <p className="text-xs text-gray-500 mt-1">Share this code with others to join your class</p>
                 </div>
 
                 <div>
@@ -245,7 +245,7 @@ export default function TeamPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Team Achievements</CardTitle>
+                <CardTitle>Class Achievements</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -255,7 +255,7 @@ export default function TeamPage() {
                     </div>
                     <div>
                       <p className="font-medium text-yellow-800">Top Performers</p>
-                      <p className="text-sm text-yellow-600">Team average above 85%</p>
+                      <p className="text-sm text-yellow-600">Class average above 85%</p>
                     </div>
                   </div>
 
@@ -264,7 +264,7 @@ export default function TeamPage() {
                       <Users className="w-4 h-4 text-white" />
                     </div>
                     <div>
-                      <p className="font-medium text-purple-800">Team Player</p>
+                      <p className="font-medium text-purple-800">Class Player</p>
                       <p className="text-sm text-purple-600">All members active this week</p>
                     </div>
                   </div>

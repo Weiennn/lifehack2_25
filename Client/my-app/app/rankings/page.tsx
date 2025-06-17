@@ -5,107 +5,78 @@ import { Trophy, Medal, Star, TrendingUp, Calendar, Filter } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { mockClassData } from "../team/page" // Import mockClassData
 
-const mockRankingsData = {
-  weekly: [
-    {
-      rank: 1,
-      name: "Sarah Chen",
-      avatar: "/placeholder.svg?height=40&width=40",
-      score: 2450,
-      quizzes: 18,
-      accuracy: 94,
-      streak: 12,
-      badge: "🏆",
-    },
-    {
-      rank: 2,
-      name: "Alex Johnson",
-      avatar: "/placeholder.svg?height=40&width=40",
-      score: 2380,
-      quizzes: 16,
-      accuracy: 92,
-      streak: 8,
-      badge: "🥈",
-    },
-    {
-      rank: 3,
-      name: "Mike Rodriguez",
-      avatar: "/placeholder.svg?height=40&width=40",
-      score: 2290,
-      quizzes: 15,
-      accuracy: 89,
-      streak: 15,
-      badge: "🥉",
-    },
-    {
-      rank: 4,
-      name: "Emma Wilson",
-      avatar: "/placeholder.svg?height=40&width=40",
-      score: 2180,
-      quizzes: 14,
-      accuracy: 87,
-      streak: 6,
-      badge: "⭐",
-    },
-    {
-      rank: 5,
-      name: "David Kim",
-      avatar: "/placeholder.svg?height=40&width=40",
-      score: 2050,
-      quizzes: 13,
-      accuracy: 85,
-      streak: 4,
-      badge: "⭐",
-    },
-    {
-      rank: 6,
-      name: "Lisa Park",
-      avatar: "/placeholder.svg?height=40&width=40",
-      score: 1980,
-      quizzes: 12,
-      accuracy: 83,
-      streak: 7,
-      badge: "⭐",
-    },
-  ],
-  monthly: [
-    {
-      rank: 1,
-      name: "Mike Rodriguez",
-      avatar: "/placeholder.svg?height=40&width=40",
-      score: 9850,
-      quizzes: 72,
-      accuracy: 91,
-      streak: 15,
-      badge: "🏆",
-    },
-    {
-      rank: 2,
-      name: "Sarah Chen",
-      avatar: "/placeholder.svg?height=40&width=40",
-      score: 9420,
-      quizzes: 68,
-      accuracy: 93,
-      streak: 12,
-      badge: "🥈",
-    },
-    {
-      rank: 3,
-      name: "Alex Johnson",
-      avatar: "/placeholder.svg?height=40&width=40",
-      score: 9180,
-      quizzes: 65,
-      accuracy: 90,
-      streak: 8,
-      badge: "🥉",
-    },
-  ],
+interface ClassMember {
+  id: number;
+  name: string;
+  role: string;
+  avatar: string;
+  streak: number;
+  totalQuizzes: number;
+  averageScore: number;
+  isLeader: boolean;
+  status: string;
 }
+
+interface RankingMember {
+  rank: number;
+  name: string;
+  avatar: string;
+  score: number;
+  quizzes: number;
+  accuracy: number;
+  streak: number;
+  badge: string;
+}
+
+// Function to generate consistent ranking data from mockClassData
+const generateRankingsData = () => {
+  const membersWithScores: (ClassMember & { score: number; quizzes: number; accuracy: number; badge: string })[] = mockClassData.members.map((member: ClassMember) => ({
+    ...member,
+    score: member.totalQuizzes * member.averageScore * 10, // Example scoring logic
+    quizzes: member.totalQuizzes,
+    accuracy: member.averageScore,
+    badge: "", // Will be assigned based on rank
+  }))
+
+  // Sort members by score in descending order
+  const sortedMembers = membersWithScores.sort((a: { score: number }, b: { score: number }) => b.score - a.score)
+
+  // Assign ranks and badges
+  const weeklyRankings: RankingMember[] = sortedMembers.map((member: ClassMember & { score: number; quizzes: number; accuracy: number; badge: string }, index: number) => {
+    let badge = "⭐"
+    if (index === 0) badge = "🏆"
+    else if (index === 1) badge = "🥈"
+    else if (index === 2) badge = "🥉"
+
+    return {
+      rank: index + 1,
+      name: member.name,
+      avatar: member.avatar,
+      score: member.score,
+      quizzes: member.quizzes,
+      accuracy: member.accuracy,
+      streak: member.streak,
+      badge: badge,
+    }
+  })
+
+  // For monthly, let's just use the same data for simplicity or create a slightly different mock
+  // For now, we'll use the same sorted data for both weekly and monthly for consistency with the team members.
+  const monthlyRankings: RankingMember[] = [...weeklyRankings];
+
+  return {
+    weekly: weeklyRankings,
+    monthly: monthlyRankings,
+  }
+}
+
+const mockRankingsData = generateRankingsData()
 
 export default function RankingsPage() {
   const [activeTab, setActiveTab] = useState("weekly")
-  const currentData = activeTab === "weekly" ? mockRankingsData.weekly : mockRankingsData.monthly
+  const currentData: RankingMember[] = activeTab === "weekly" ? mockRankingsData.weekly : mockRankingsData.monthly
 
   const getRankColor = (rank: number) => {
     switch (rank) {
@@ -158,7 +129,7 @@ export default function RankingsPage() {
                       <AvatarFallback>
                         {currentData[1].name
                           .split(" ")
-                          .map((n) => n[0])
+                          .map((n: string) => n[0])
                           .join("")}
                       </AvatarFallback>
                     </Avatar>
@@ -181,7 +152,7 @@ export default function RankingsPage() {
                       <AvatarFallback>
                         {currentData[0].name
                           .split(" ")
-                          .map((n) => n[0])
+                          .map((n: string) => n[0])
                           .join("")}
                       </AvatarFallback>
                     </Avatar>
@@ -205,7 +176,7 @@ export default function RankingsPage() {
                       <AvatarFallback>
                         {currentData[2].name
                           .split(" ")
-                          .map((n) => n[0])
+                          .map((n: string) => n[0])
                           .join("")}
                       </AvatarFallback>
                     </Avatar>
@@ -243,7 +214,7 @@ export default function RankingsPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {currentData.map((student, index) => (
+              {currentData.map((student: RankingMember, index: number) => (
                 <div
                   key={student.rank}
                   className={`flex items-center space-x-4 p-4 rounded-lg transition-all duration-200 ${
@@ -266,7 +237,7 @@ export default function RankingsPage() {
                       <AvatarFallback>
                         {student.name
                           .split(" ")
-                          .map((n) => n[0])
+                          .map((n: string) => n[0])
                           .join("")}
                       </AvatarFallback>
                     </Avatar>

@@ -9,7 +9,7 @@ async function generateQuestions(textChunk) {
   const promptText = `
 You are an educational assistant helping students study more effectively by turning their uploaded notes into practice questions.
 
-From the text below (student’s notes), generate exactly 5 multiple‐choice questions.
+From the text below (student’s notes), generate exactly 24 multiple‐choice questions, with 8 Easy, 8 Medium, and 8 Hard difficulties.
 For each question, produce a JSON object with the following fields:
   • "question": the question stem  
   • "options": an array of four choice strings, e.g. ["A process…", "B process…", "C process…", "D process…"]  

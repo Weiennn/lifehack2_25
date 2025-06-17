@@ -26,6 +26,19 @@ db.serialize(() => {
   `, (err) => {
     if (err) console.error('Error creating table:', err);
   });
+  db.run(`
+    CREATE TABLE IF NOT EXISTS user_quiz_progress (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT NOT NULL,
+      quiz_id INTEGER NOT NULL,
+      confidence_score INTEGER DEFAULT 0,
+      asked_question_ids TEXT DEFAULT '[]', -- JSON string of array of question IDs
+      FOREIGN KEY(quiz_id) REFERENCES quizzes(id),
+      UNIQUE(username, quiz_id)
+    );
+  `, (err) => {
+    if (err) console.error('Error creating table:', err);
+  });
 });
 
 module.exports = db;

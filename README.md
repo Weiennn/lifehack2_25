@@ -11,6 +11,13 @@ This project is an AI-powered platform designed to help students study more effe
 *   **Local Data Storage**: Utilizes SQLite for efficient local storage of quiz data and other application-related information.
 *   **Team Management & Rankings**: Features to organize users into teams and display their performance through a ranking system.
 
+### Screenshots
+
+Here's a glimpse of the application's user interface:
+
+![LearnAI Platform Screenshot](./assets/learnai-screenshot.png)
+*(Please place your screenshot image, named `learnai-screenshot.png`, into the `lifehack2_25/assets/` directory.)*
+
 ### File Structure
 
 ```
@@ -158,24 +165,3 @@ Once both the client and server are running:
     *   **dotenv**: Module to load environment variables from a `.env` file.
     *   **cors**: Node.js package for providing a Connect/Express middleware that can be used to enable CORS with various options.
     *   **nodemon**: A tool that helps develop Node.js based applications by automatically restarting the node application when file changes in the directory are detected.
-
-### Documentation
-
-To ensure maintainability and future development, consider adding the following documentation:
-
-*   **API Endpoints**:
-    *   Detailed documentation for each API endpoint (e.g., `/generate-questions`, `/upload`), including HTTP methods (POST, GET), expected request body/query parameters, and example JSON responses.
-    *   Consider using tools like Swagger/OpenAPI for automated API documentation.
-*   **Client Components**:
-    *   Explanation of the purpose and usage of key React components, especially those in `Client/my-app/components/` and `Client/my-app/app/` pages.
-    *   Document props, state management, and any specific behaviors.
-*   **Utility Functions**:
-    *   Detailed comments and explanations for functions within `server/src/utils/` (e.g., `gemini.js`, `pdf.js`), describing their inputs, outputs, and core logic.
-*   **Database Schema**:
-    *   A clear description of the SQLite database schema, including table names, column names, data types, primary keys, foreign keys, and relationships. This can be a simple markdown table or a diagram.
-*   **Deployment Guide**:
-    *   Instructions on how to deploy the client and server applications to a production environment (e.g., Vercel for Next.js, Render/Heroku for Node.js).
-
-### License
-
-This project is licensed under the [Your Chosen License] - see the `LICENSE` file for details. (If you have a license file, otherwise remove this section or specify "MIT License" or "Unlicensed".)

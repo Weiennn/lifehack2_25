@@ -16,7 +16,15 @@ Here's a look at the application's user interface:
 
 #### Dashboard Page
 
-The dashboard page provides an overview of the application and quick access to it's key features.
+The dashboard page provides an overview of the application and quick access to the application's key features.
+
+The dashboard also shows the following data:
+- **Current Streak**: 7 days (shows consistency and gamifies progress)
+- **Total Quizzes Completed**: 24 (tracks user activity)
+- **Average Score**: 87% (gives performance feedback)
+- **Weekly Goal Progress**: 65% (visual progress bar)
+- **Weekly Progress Section**: (reinforces weekly targets with both percentage and visual progress bar)
+- **Recent Topics Section**: (provides easy recall and topic tracking)
 
 ![LearnAI Dashboard Page](./assets/LearnAI-Dashboard.png)
 
@@ -28,19 +36,27 @@ Allows users to upload their study materials (e.g., PDF documents) for AI proces
 
 #### Quiz Page
 
-Where users can take the AI-generated quizzes.
+Where users can take the AI-generated quizzes. We currently have two modes: 
+- **Normal quizzes** (regular set of quiz questions with varying difficulty)
+- **Adaptive quizzes** (quizzes that tailors questions based on your assessed proficiency of the topic)
 
 ![LearnAI Quiz Page](./assets/LearnAI-Quiz.png)
 
 #### Team Page
 
-Enables users to manage their teams and collaborate.
+Enables users to manage their classes and collaborate with classmates in a shared learning environment.
+
+Key features include:
+- **Class Overview**: Displays the number of members, total quizzes completed, and the average class score for group performance insights.
+- **Member Statistics**: View each class member's learning streak, quiz activity, and average score.
+- **Invite Classmates**: Easily expand your class with a shareable class code or email invitation.
+- **Class Achievements**: Motivational badges (e.g., Class Player) recognise group milestones and encourage consistent engagement.
 
 ![LearnAI Team Page](./assets/LearnAI-Team.png)
 
 #### Rankings Page
 
-Displays user and team rankings based on quiz performance.
+Displays user rankings based on quiz performance and streaks.
 
 ![LearnAI Rankings Page](./assets/LearnAI-Rankings.png)
 
